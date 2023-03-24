@@ -1,13 +1,21 @@
-import mongoose from "mongoose";
+import * as dotenv from 'dotenv';
+import mongoose from 'mongoose';
 
-export const sqliteConnection = new Sequelize('db', 'username', 'password', {
-    dialect: 'sqlite',
-    storage: './db.sqlite'
-});
+dotenv.config();
 
-export const testAutentication = async () => {
+const uri = process.env.MONGODB_URI ? process.env.MONGODB_URI : ""
+
+export const connectionDB = async () => {
+    await mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 5000,
+        dbName: 'mercado'
+    })
+}
+
+export const testAuthentication = async () => {
     try {
-        await sqliteConnection.authenticate()
+        await connectionDB()
+        await mongoose.connection.db.admin().ping()
         console.log('banco de dados conectado')
     } catch (error) {
         console.error('incapaz de se conectar ao banco de dados ', error)
