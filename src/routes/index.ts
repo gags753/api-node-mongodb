@@ -1,13 +1,20 @@
 import { Router } from "express";
+import { testAuthentication, connectionDB } from '../core/db/connection';
+import { productRouter } from "./product.routes";
 
 const router = Router();
 
+connectionDB().then(() => console.log('banco pronto'))
 
 router.get("/", async (req, res) => {
+    const connection = await testAuthentication()
     return res.json({
-        message: "server API up",
-    });
+        mongoDB_connection: connection
+    })
 });
 
 
-export { router }
+
+router.use('/product', productRouter)
+
+export { router };
